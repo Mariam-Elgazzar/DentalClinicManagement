@@ -14,8 +14,11 @@ namespace DentalClinicManagement.DAL.DataBase
         public DbSet<Receptionist> Receptionists { get; set; }
         public DbSet<Dentist> Dentists { get; set; }
         public DbSet<DentistManagement> DentistManagements  { get; set; }
-        public DbSet<PatientManagement> PatientManagements  { get; set; }
         public DbSet<Patient> Patients { get; set; }
+        public DbSet<PatientManagement> PatientManagements  { get; set; }
+        public DbSet<Treatment> Treatments {  get; set; }
+        public DbSet<Session> Sessions {  get; set; }
+        public DbSet<Prescription> Prescriptions {  get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

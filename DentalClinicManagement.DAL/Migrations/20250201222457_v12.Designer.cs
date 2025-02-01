@@ -4,6 +4,7 @@ using DentalClinicManagement.DAL.DataBase;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DentalClinicManagement.DAL.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250201222457_v12")]
+    partial class v12
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -122,49 +125,6 @@ namespace DentalClinicManagement.DAL.Migrations
                     b.ToTable("PatientManagements");
                 });
 
-            modelBuilder.Entity("DentalClinicManagement.DAL.Models.Prescription", b =>
-                {
-                    b.Property<int>("PId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PId", "TId", "DId");
-
-                    b.HasIndex("DId");
-
-                    b.HasIndex("TId");
-
-                    b.ToTable("Prescriptions");
-                });
-
-            modelBuilder.Entity("DentalClinicManagement.DAL.Models.Session", b =>
-                {
-                    b.Property<int>("PId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("dateTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("PId", "RId", "DId");
-
-                    b.HasIndex("DId");
-
-                    b.HasIndex("RId");
-
-                    b.ToTable("Sessions");
-                });
-
             modelBuilder.Entity("DentalClinicManagement.DAL.Models.Treatment", b =>
                 {
                     b.Property<int>("Id")
@@ -252,60 +212,6 @@ namespace DentalClinicManagement.DAL.Migrations
                         .HasForeignKey("RId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("patient");
-
-                    b.Navigation("receptionist");
-                });
-
-            modelBuilder.Entity("DentalClinicManagement.DAL.Models.Prescription", b =>
-                {
-                    b.HasOne("DentalClinicManagement.DAL.Models.Dentist", "dentist")
-                        .WithMany()
-                        .HasForeignKey("DId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DentalClinicManagement.DAL.Models.Patient", "patient")
-                        .WithMany()
-                        .HasForeignKey("PId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DentalClinicManagement.DAL.Models.Treatment", "treatment")
-                        .WithMany()
-                        .HasForeignKey("TId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("dentist");
-
-                    b.Navigation("patient");
-
-                    b.Navigation("treatment");
-                });
-
-            modelBuilder.Entity("DentalClinicManagement.DAL.Models.Session", b =>
-                {
-                    b.HasOne("DentalClinicManagement.DAL.Models.Dentist", "dentist")
-                        .WithMany()
-                        .HasForeignKey("DId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DentalClinicManagement.DAL.Models.Patient", "patient")
-                        .WithMany()
-                        .HasForeignKey("PId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DentalClinicManagement.PL.Receptionist", "receptionist")
-                        .WithMany()
-                        .HasForeignKey("RId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("dentist");
 
                     b.Navigation("patient");
 
