@@ -13,10 +13,13 @@ namespace DentalClinicManagement.DAL.DataBase
     {
         public DbSet<Receptionist> Receptionists { get; set; }
         public DbSet<Dentist> Dentists { get; set; }
+        public DbSet<DentistManagement> DentistManagements  { get; set; }
+        public DbSet<PatientManagement> PatientManagements  { get; set; }
+        public DbSet<Patient> Patients { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=(localdb)\\ProjectModels;Initial Catalog=DentalClinicManagement;Integrated Security=True;Trust Server Certificate=True");
+            optionsBuilder.UseLazyLoadingProxies().UseSqlServer("Data Source=(localdb)\\ProjectModels;Initial Catalog=DentalClinicManagement;Integrated Security=True;Trust Server Certificate=True");
         }
     }
 }
