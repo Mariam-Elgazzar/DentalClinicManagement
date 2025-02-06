@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DentalClinicManagement.BL.Repositories
 {
@@ -23,7 +24,15 @@ namespace DentalClinicManagement.BL.Repositories
             return all;
 
         }
-
+        public List<Session> Filter(string query)
+        {
+            var filteredSessions = db.Sessions
+                .Where(s => s.patient.Name.Contains(query) ||
+                s.dentist.Name.Contains(query) ||
+                s.receptionist.Name.Contains(query))
+            .ToList();
+            return filteredSessions;
+        }
        public Session Add(Session obj)
         {
             if (obj == null)
