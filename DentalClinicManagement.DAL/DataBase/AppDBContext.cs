@@ -22,7 +22,7 @@ namespace DentalClinicManagement.DAL.DataBase
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseLazyLoadingProxies().UseSqlServer("Data Source=(localdb)\\ProjectModels;Initial Catalog=DentalClinicManagement;Integrated Security=True;Trust Server Certificate=True");
+            optionsBuilder.UseLazyLoadingProxies().UseSqlServer("Data Source=(localdb)\\ProjectModels;Initial Catalog=DentalClinicManagement;Integrated Security=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
         }
     }
 }

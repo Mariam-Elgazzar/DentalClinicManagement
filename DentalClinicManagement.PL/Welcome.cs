@@ -6,5 +6,10 @@ namespace DentalClinicManagement.PL
         {
             InitializeComponent();
         }
+
+        private void Welcome_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
