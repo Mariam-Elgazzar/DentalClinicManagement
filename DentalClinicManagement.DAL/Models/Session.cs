@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -9,10 +10,12 @@ using System.Threading.Tasks;
 
 namespace DentalClinicManagement.DAL.Models
 {
-        [PrimaryKey(nameof(PId), nameof(RId),nameof(DId))]
+
     public class Session
     {
-
+        //[DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Key ]
+        public int Id { get; set; }
         public int DId { get; set; }
         [ForeignKey(nameof(DId))]
         public virtual Dentist dentist { get; set; }
@@ -24,7 +27,6 @@ namespace DentalClinicManagement.DAL.Models
         public int RId { get; set; }
         [ForeignKey(nameof(RId))]
         public virtual Receptionist receptionist { get; set; }
-
 
         public DateTime dateTime { get; set; }
     }

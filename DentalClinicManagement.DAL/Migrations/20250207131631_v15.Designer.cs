@@ -4,6 +4,7 @@ using DentalClinicManagement.DAL.DataBase;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DentalClinicManagement.DAL.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250207131631_v15")]
+    partial class v15
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -144,29 +147,21 @@ namespace DentalClinicManagement.DAL.Migrations
 
             modelBuilder.Entity("DentalClinicManagement.DAL.Models.Session", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DId")
-                        .HasColumnType("int");
-
                     b.Property<int>("PId")
                         .HasColumnType("int");
 
                     b.Property<int>("RId")
                         .HasColumnType("int");
 
+                    b.Property<int>("DId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("dateTime")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                    b.HasKey("PId", "RId", "DId", "dateTime");
 
                     b.HasIndex("DId");
-
-                    b.HasIndex("PId");
 
                     b.HasIndex("RId");
 

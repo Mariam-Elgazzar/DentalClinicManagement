@@ -24,6 +24,10 @@ namespace DentalClinicManagement.BL.Repositories
             return all;
 
         }
+        public Session GetSessionByIds(int dId,int rId ,int pId,int id)
+        {
+            return db.Sessions.FirstOrDefault(r=>r.Id==id);
+        }
         public List<Session> Filter(string query)
         {
             var filteredSessions = db.Sessions
@@ -45,19 +49,21 @@ namespace DentalClinicManagement.BL.Repositories
         }
         public void Update(Session obj)
         {
-            if (!db.Sessions.Any(i => i.PId == obj.PId && i.RId==obj.RId && i.DId==obj.DId))
+            if (obj==null)
             {
                 throw new Exception("obj is null or id is not found ");
             }
-            db.Sessions.Update(obj);
+            
+            db.Update(obj);
             db.SaveChanges();
         }
-        public void Remove(int DID ,int RID,int PID ) {
-            if (!db.Sessions.Any(i => i.PId == PID && i.RId == RID && i.DId == DID))
+        public void Remove(int id ) {
+            if (!db.Sessions.Any(i =>i.Id==id))
             {
+                var s = db.Sessions.FirstOrDefault(i => i.Id == id);
                 throw new Exception("obj is null or id is not found ");
             }
-            var obj =db.Sessions.Where(o => o.dentist.Id == DID && o.patient.Id == PID && o.receptionist.Id == RID).FirstOrDefault();
+            var obj =db.Sessions.Where(o => o.Id==id ).FirstOrDefault();
             db.Sessions.Remove(obj);
             db.SaveChanges();
         }

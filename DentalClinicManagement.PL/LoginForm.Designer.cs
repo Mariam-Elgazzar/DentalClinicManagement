@@ -236,7 +236,7 @@
             MinimumSize = new Size(1166, 544);
             Name = "LoginForm";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Frm_Login";
+            Text = "Frm_Login";           
             panel2.ResumeLayout(false);
             panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();

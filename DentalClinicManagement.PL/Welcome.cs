@@ -2,6 +2,8 @@
 using DentalClinicManagement.DAL.Models;
 using MaterialSkin;
 using MaterialSkin.Controls;
+using Microsoft.Identity.Client;
+using Microsoft.VisualBasic.ApplicationServices;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,17 +14,17 @@ namespace DentalClinicManagement.PL
 {
     public partial class Welcome : MaterialForm
     {
-         DataGridView dataGrid;
-         SessionRepo _SessionRepo;
-         List<Session> _sessions;
+        DataGridView dataGrid;
+        SessionRepo _SessionRepo;
+        List<Session> _sessions;
+        private readonly Receptionist loggedResptionist;
 
-        public Welcome()
+        public Welcome(Receptionist receptionist)
         {
             InitializeComponent();
             _SessionRepo = new SessionRepo();
             _sessions = _SessionRepo.GetAll().ToList(); // Fetch sessions without BindingList
-
-            // Initialize MaterialSkin
+            loggedResptionist = receptionist;
             var materialSkinManager = MaterialSkinManager.Instance;
             materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
@@ -30,20 +32,17 @@ namespace DentalClinicManagement.PL
                 Primary.Blue600, Primary.Blue700, Primary.Blue200,
                 Accent.LightBlue200, TextShade.WHITE);
 
-            // Build the UI
             SetupUI();
             LoadSessions();
         }
 
         private void SetupUI()
         {
-            // 🟢 إعدادات النافذة
             this.Text = "Dental Clinic";
             this.Size = new Size(1000, 1000);
             this.StartPosition = FormStartPosition.CenterScreen;
 
-            // 🟢 الشريط الجانبي
-            // 🟢 الشريط الجانبي
+
             Panel sidebar = new Panel
             {
                 BackColor = Color.FromArgb(33, 150, 243),
@@ -52,51 +51,61 @@ namespace DentalClinicManagement.PL
             };
             this.Controls.Add(sidebar);
 
-            // 🟢 Logo (تم تعديل موقعه ليكون فوق الأزرار مباشرةً)
             PictureBox logo = new PictureBox
             {
                 Image = Image.FromFile("icons8-dentist-time-64.png"),
                 SizeMode = PictureBoxSizeMode.Zoom,
                 Width = 100,
                 Height = 100,
-                Top = 10, // جعله فوق الأزرار
-                Left = (sidebar.Width - 100) / 2 // توسيطه داخل الـ sidebar
+                Top = 10,
+                Left = (sidebar.Width - 100) / 2
             };
-           
 
-            // 🟢 الأزرار الجانبية
-            Dictionary<string, Form> menuItems = new Dictionary<string, Form>
-{
-    { "Dashboard", new DashboardForm() },
-    // { "Patients", new PatientsForm() },
-    // { "Dentists", new DentistsForm() },
-    // { "Appointments", new AppointmentsForm() },
-    // { "Sessions", new SessionsForm() },
-    // { "Settings", new SettingsForm() }
-};
 
-            int yOffset =  20; // وضع الأزرار بعد الصورة مباشرة
-            foreach (var item in menuItems)
+            int yOffset = 20;
+            // إضافة زرار Dashboard
+            MaterialButton dashboardButton = new MaterialButton
             {
-                MaterialButton btn = new MaterialButton
-                {
-                    Text = item.Key,
-                    Dock = DockStyle.Top,
-                    Width = sidebar.Width - 20,
-                    Left = 10,
-                    Height = 50,
-                    Margin = new Padding(10, 5, 10, 5),
-                    HighEmphasis = false
-                };
+                Text = "Dashboard",
+                Dock = DockStyle.Top,
+                Width = sidebar.Width - 20,
+                Left = 10,
+                Height = 50,
+                Margin = new Padding(10, 5, 10, 5),
+                HighEmphasis = false
+            };
+            dashboardButton.Click += (sender, e) => OpenForm(new DashboardForm());
+            sidebar.Controls.Add(dashboardButton);
 
-                btn.Click += (sender, e) => OpenForm(item.Value);
+            
+            MaterialButton patientsButton = new MaterialButton
+            {
+                Text = "Patients",
+                Dock = DockStyle.Top,
+                Width = sidebar.Width - 20,
+                Left = 10,
+                Height = 50,
+                Margin = new Padding(10, 5, 10, 5),
+                HighEmphasis = false
+            };
+            patientsButton.Click += (sender, e) => OpenForm(new PatientsForm(loggedResptionist));
+            sidebar.Controls.Add(patientsButton);
 
-                btn.Top = yOffset;
-                sidebar.Controls.Add(btn);
-                yOffset += 50;
-            }
+            
+            MaterialButton dentistsButton = new MaterialButton
+            {
+                Text = "Dentists",
+                Dock = DockStyle.Top,
+                Width = sidebar.Width - 20,
+                Left = 10,
+                Height = 50,
+                Margin = new Padding(10, 5, 10, 5),
+                HighEmphasis = false
+            };
+            dentistsButton.Click += (sender, e) => OpenForm(new DentistsForm(loggedResptionist));
+            sidebar.Controls.Add(dentistsButton);
 
-            // 🟢 الترويسة العلوية
+
             Panel topPanel = new Panel
             {
                 BackColor = Color.White,
@@ -106,7 +115,6 @@ namespace DentalClinicManagement.PL
             this.Controls.Add(topPanel);
             topPanel.Controls.Add(logo);
 
-            // 🟢 عنوان الصفحة
             Label titleLabel = new Label
             {
                 Text = "Sessions",
@@ -115,25 +123,22 @@ namespace DentalClinicManagement.PL
             };
             topPanel.Controls.Add(titleLabel);
 
-            // 🟢 مربع البحث
             MaterialTextBox searchBox = new MaterialTextBox
             {
-                Hint = "Search...",
+
                 Width = 180,
                 Location = new Point(400, 15)
             };
             topPanel.Controls.Add(searchBox);
-            // 🟢 زر البحث
             MaterialButton searchButton = new MaterialButton
             {
                 Text = "Search",
                 Width = 80,
-                Location = new Point(590, 15),
+                Location = new Point(600, 15),
                 HighEmphasis = true
             };
             topPanel.Controls.Add(searchButton);
 
-            // ربط الزر بوظيفة البحث
             searchButton.Click += (sender, e) => SearchSessions(searchBox.Text);
 
 
@@ -148,17 +153,36 @@ namespace DentalClinicManagement.PL
 
             MaterialButton addButton = new MaterialButton
             {
-                Text = "Manage Sessions",
+                Text = "Add",
                 Width = 200,
-                Location = new Point(720, 15),
+                Location = new Point(700, 15),
                 HighEmphasis = true
             };
             topPanel.Controls.Add(addButton);
+            addButton.Click += addButton_Click;
+            MaterialButton updateButton = new MaterialButton
+            {
+                Text = "Edit",
+                Width = 200,
+                Location = new Point(800, 15),
+                HighEmphasis = true
+            };
+            topPanel.Controls.Add(updateButton);
+            updateButton.Click += updateButton_Click;
+            MaterialButton deleteButton = new MaterialButton
+            {
+                Text = "Delete",
+                Width = 200,
+                Location = new Point(900, 15),
+                HighEmphasis = true
+            };
+            topPanel.Controls.Add(deleteButton);
+            deleteButton.Click += deleteButton_Click;
 
             dataGrid = new DataGridView
             {
                 Location = new Point(240, 190),
-                Width = 800,  
+                Width = 800,
                 Height = 400,
                 Padding = DefaultMargin,
                 ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize,  // الهيدر يتكيف مع المحتوى
@@ -169,16 +193,12 @@ namespace DentalClinicManagement.PL
                 ReadOnly = true
             };
 
-            // تغيير إعدادات الأعمدة
             dataGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
 
-            // تغيير حجم الخط في الهيدر
             dataGrid.ColumnHeadersDefaultCellStyle.Font = new Font("Arial", 12, FontStyle.Bold);
 
-            // تغيير حجم الخط في الخلايا
             dataGrid.DefaultCellStyle.Font = new Font("Arial", 10);
 
-            // تعيين الخصائص للأعمدة
             dataGrid.Columns.Clear();
             dataGrid.Columns.Add(new DataGridViewTextBoxColumn
             {
@@ -207,6 +227,11 @@ namespace DentalClinicManagement.PL
                 Width = 180,
                 DefaultCellStyle = { Format = "g" } // To format the date and time in short format
             });
+            dataGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "PId", Visible = false });
+            dataGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "DId", Visible = false });
+            dataGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "RId", Visible = false });
+            dataGrid.Columns.Add(new DataGridViewTextBoxColumn { Name = "Id", Visible = false });
+
 
             this.Controls.Add(dataGrid);
             dataGrid.EnableHeadersVisualStyles = false;
@@ -218,7 +243,9 @@ namespace DentalClinicManagement.PL
             dataGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
         }
 
-        private void LoadSessions()
+
+
+        public void LoadSessions()
         {
             // Clear existing rows
             dataGrid.Rows.Clear();
@@ -231,13 +258,19 @@ namespace DentalClinicManagement.PL
                     session.dentist.Name,
                     session.receptionist.Name,
                     session.dateTime.ToShortDateString(),
-                    session.dateTime.ToShortTimeString());
-                    };
+                    session.dateTime.ToShortTimeString(),
+                    session.PId,
+                    session.DId,
+                    session.RId,
+                    session.Id
+                    );
+            };
         }
         private void OpenForm(Form form)
-        {    
+        {
             form.StartPosition = FormStartPosition.CenterScreen;
             form.ShowDialog();
+            this.Close();
         }
 
         private void SearchSessions(string query)
@@ -258,14 +291,88 @@ namespace DentalClinicManagement.PL
                     session.dentist.Name,
                     session.receptionist.Name,
                     session.dateTime.ToShortDateString(),
-                    session.dateTime.ToShortTimeString()
-                    );
+                    session.dateTime.ToShortTimeString(),
+                    session.PId,
+                    session.DId,
+                    session.RId,
+                    session.Id
+                 );
+            }
+        }
+
+        private void deleteButton_Click(object sender, EventArgs e)
+        {
+            if (dataGrid.SelectedRows.Count > 0)
+            {
+                int Pid = Convert.ToInt32(dataGrid.SelectedRows[0].Cells["PId"].Value);
+                int Did = Convert.ToInt32(dataGrid.SelectedRows[0].Cells["DId"].Value);
+                int Rid = Convert.ToInt32(dataGrid.SelectedRows[0].Cells["RId"].Value);
+                int id = Convert.ToInt32(dataGrid.SelectedRows[0].Cells["Id"].Value);
+
+                DialogResult result = MessageBox.Show("Are you sure you want to delete this session?",
+                                                      "Confirm Deletion",
+                                                      MessageBoxButtons.YesNo,
+                                                      MessageBoxIcon.Warning);
+
+                if (result == DialogResult.Yes)
+                {
+                    _SessionRepo.Remove(id);
+                    LoadSessions();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a session to delete.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private void updateButton_Click(object sender, EventArgs e)
+        {
+            if (dataGrid.SelectedRows.Count > 0)
+            {
+                int Did = Convert.ToInt32(dataGrid.SelectedRows[0].Cells["DId"].Value);
+                int Rid = Convert.ToInt32(dataGrid.SelectedRows[0].Cells["RId"].Value);
+                int Pid = Convert.ToInt32(dataGrid.SelectedRows[0].Cells["PId"].Value);
+                int id = Convert.ToInt32(dataGrid.SelectedRows[0].Cells["Id"].Value);
+                Session selectedSession = _SessionRepo.GetSessionByIds(Did, Rid, Pid,id);
+
+                if (selectedSession != null)
+                {
+                    EditSessionForm editForm = new EditSessionForm(selectedSession);
+                    DialogResult result = editForm.ShowDialog();
+
+                    if (result == DialogResult.OK)
+                    {
+                        _SessionRepo.Update(editForm.GetUpdatedSession());
+                        LoadSessions();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("The selected session was not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a session to update.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+
+        private void addButton_Click(object sender, EventArgs e)
+        {
+            AddSessionForm addForm = new AddSessionForm(loggedResptionist);
+            DialogResult result = addForm.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                _SessionRepo.Add(addForm.getNewSession);
+                LoadSessions(); 
             }
         }
 
         private void Welcome_Load(object sender, EventArgs e)
         {
-            // Load event if needed
+            LoadSessions();
         }
     }
 }

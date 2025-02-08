@@ -22,7 +22,26 @@ namespace DentalClinicManagement.BL.Repositories
 
             return dBContext.Patients.ToList();
         }
+        public Patient GetById(int id)
+        {
+            try
+            {
+                
+                var patient = dBContext.Patients.FirstOrDefault(p => p.Id == id);
 
+                if (patient == null)
+                {
+                    throw new Exception("Patient not found!");
+                }
+
+                return patient;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                return null;
+            }
+        }
         public Patient Add(Patient patient) {
             if(patient == null)
             {

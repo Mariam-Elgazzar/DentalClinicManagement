@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DentalClinicManagement.DAL.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -17,5 +18,9 @@ namespace DentalClinicManagement.PL
        public string Password { get; set; }
        public bool IsAdmin { get; set; }
 
+        public static implicit operator Receptionist(Dentist v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

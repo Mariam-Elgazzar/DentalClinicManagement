@@ -1,47 +1,39 @@
 ﻿using DentalClinicManagement.BL.Repositories;
 using DentalClinicManagement.DAL.DataBase;
-using Microsoft.VisualBasic.ApplicationServices;
+using DentalClinicManagement.DAL.Models;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace DentalClinicManagement.PL
 {
     public partial class LoginForm : Form
     {
-        ReceptionistRepo _receptionistRepo;
-        DentistRepo _Dentist;
+        private readonly AppDBContext _dbContext;
+
         public LoginForm()
         {
             InitializeComponent();
-
-            _receptionistRepo = new ReceptionistRepo();
-            _Dentist = new DentistRepo();
-        }
-
-
-        private void LoginForm_Load(object sender, EventArgs e)
-        {
+            _dbContext = new AppDBContext();
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            UserRepo userRepo = new UserRepo(new AppDBContext());
-
             string username = txtUserName.Text;
             string password = txtUserPassword.Text;
 
-            string userType;
-            var user = userRepo.ValidateUser(username, password, out userType);
+            var receptionistRepo = new UserRepo<Receptionist>(_dbContext);
+            var (receptionist, userType) = receptionistRepo.ValidateUser(username, password);
 
-            if (user != null)
+            if (receptionist == null)
+            {
+                var dentistRepo = new UserRepo<Dentist>(_dbContext);
+                var (dentist, dentistUserType) = dentistRepo.ValidateUser(username, password);
+
+                receptionist = dentist;
+                userType = dentistUserType;
+            }
+
+            if (receptionist != null)
             {
                 MessageBox.Show($"Welcome, {username}! You are logged in as a {userType}.",
                                 "Login Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -49,8 +41,10 @@ namespace DentalClinicManagement.PL
                 // 🔹 Redirect based on user type
                 if (userType == "Receptionist")
                 {
-                    //ReceptionistDashboard dashboard = new ReceptionistDashboard();
-                    //dashboard.Show();
+                    Welcome welcome = new Welcome(receptionist);
+                    
+                    welcome.ShowDialog();
+                    this.Hide();
                 }
                 else if (userType == "Dentist")
                 {

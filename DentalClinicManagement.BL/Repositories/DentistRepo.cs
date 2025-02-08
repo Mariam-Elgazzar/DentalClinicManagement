@@ -22,6 +22,14 @@ namespace DentalClinicManagement.BL.Repositories
         {
             return dBContext.Dentists.ToList();
         }
+        public Dentist GetById(int id)
+        {
+           
+            
+                return dBContext.Dentists.FirstOrDefault(d => d.Id == id);
+            
+        }
+
         public Dentist Add(Dentist dentist)
         {
             if (dentist == null)
