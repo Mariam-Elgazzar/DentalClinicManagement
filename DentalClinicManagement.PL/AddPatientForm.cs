@@ -88,7 +88,7 @@ namespace DentalClinicManagement.PL
                     Phone = txtPhone.Text,
                     Address = string.IsNullOrWhiteSpace(txtAddress.Text) ? null : txtAddress.Text,
                     gender = (Gender)cmbGender.SelectedIndex,
-                    DOB = DateOnly.FromDateTime(dtpDOB.Value),
+                    DOB = dtpDOB.Value,
                     Allergies = string.IsNullOrWhiteSpace(txtAllergies.Text) ? null : txtAllergies.Text
                 };
 

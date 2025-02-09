@@ -63,7 +63,6 @@ namespace DentalClinicManagement.PL
 
 
             int yOffset = 20;
-            // إضافة زرار Dashboard
             MaterialButton dashboardButton = new MaterialButton
             {
                 Text = "Dashboard",
@@ -247,10 +246,8 @@ namespace DentalClinicManagement.PL
 
         public void LoadSessions()
         {
-            // Clear existing rows
             dataGrid.Rows.Clear();
 
-            // Add each session as a row manually
             foreach (var session in _sessions)
             {
                 dataGrid.Rows.Add(
@@ -333,7 +330,7 @@ namespace DentalClinicManagement.PL
                 int Rid = Convert.ToInt32(dataGrid.SelectedRows[0].Cells["RId"].Value);
                 int Pid = Convert.ToInt32(dataGrid.SelectedRows[0].Cells["PId"].Value);
                 int id = Convert.ToInt32(dataGrid.SelectedRows[0].Cells["Id"].Value);
-                Session selectedSession = _SessionRepo.GetSessionByIds(Did, Rid, Pid,id);
+                Session selectedSession = _SessionRepo.GetSessionByIds(Did, Rid, Pid, id);
 
                 if (selectedSession != null)
                 {

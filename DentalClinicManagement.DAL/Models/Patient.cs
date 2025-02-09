@@ -19,7 +19,7 @@ namespace DentalClinicManagement.DAL.Models
         public string Phone { get; set; }
         public string? Address {  get; set; }
         public Gender gender { get; set; }
-        public DateOnly DOB {  get; set; }
+        public DateTime DOB {  get; set; }
         public string? Allergies { get; set; }
 
     }

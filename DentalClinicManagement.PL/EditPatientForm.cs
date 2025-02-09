@@ -108,7 +108,7 @@ namespace DentalClinicManagement.PL
             txtPhone.Text = _patient.Phone;
             txtAddress.Text = _patient.Address;
             cmbGender.SelectedIndex = (int)_patient.gender;
-            dtpDOB.Value = _patient.DOB.ToDateTime(TimeOnly.MinValue);
+            dtpDOB.Value = _patient.DOB.Date;
             txtAllergies.Text = _patient.Allergies;
         }
 
@@ -125,7 +125,7 @@ namespace DentalClinicManagement.PL
             _patient.Phone = txtPhone.Text;
             _patient.Address = string.IsNullOrWhiteSpace(txtAddress.Text) ? null : txtAddress.Text;
             _patient.gender = (Gender)cmbGender.SelectedIndex;
-            _patient.DOB = DateOnly.FromDateTime(dtpDOB.Value);
+            _patient.DOB =dtpDOB.Value;
             _patient.Allergies = string.IsNullOrWhiteSpace(txtAllergies.Text) ? null : txtAllergies.Text;
 
             _patientRepo.Update(_patient);

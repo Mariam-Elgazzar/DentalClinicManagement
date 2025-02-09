@@ -31,9 +31,9 @@ namespace DentalClinicManagement.BL.Repositories
         public List<Session> Filter(string query)
         {
             var filteredSessions = db.Sessions
-                .Where(s => s.patient.Name.Contains(query) ||
-                s.dentist.Name.Contains(query) ||
-                s.receptionist.Name.Contains(query))
+                .Where(s => s.patient.Name.ToLower().Contains(query.ToLower()) ||
+                s.dentist.Name.ToLower().Contains(query.ToLower()) ||
+                s.receptionist.Name.ToLower().Contains(query.ToLower()))
             .ToList();
             return filteredSessions;
         }

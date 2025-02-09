@@ -23,17 +23,16 @@ namespace DentalClinicManagement.PL
 
             var receptionistRepo = new UserRepo<Receptionist>(_dbContext);
             var (receptionist, userType) = receptionistRepo.ValidateUser(username, password);
-
+            Dentist dentist = null;
             if (receptionist == null)
             {
                 var dentistRepo = new UserRepo<Dentist>(_dbContext);
-                var (dentist, dentistUserType) = dentistRepo.ValidateUser(username, password);
-
-                receptionist = dentist;
+                var (_dentist, dentistUserType) = dentistRepo.ValidateUser(username, password);
+                dentist= _dentist;
                 userType = dentistUserType;
             }
 
-            if (receptionist != null)
+            if (receptionist != null || dentist !=null)
             {
                 MessageBox.Show($"Welcome, {username}! You are logged in as a {userType}.",
                                 "Login Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -48,8 +47,10 @@ namespace DentalClinicManagement.PL
                 }
                 else if (userType == "Dentist")
                 {
-                    //DentistDashboard dashboard = new DentistDashboard();
-                    //dashboard.Show();
+                    DentistForm form = new DentistForm(dentist);
+                    form.ShowDialog();
+                    this.Hide();
+
                 }
 
                 this.Hide(); // Hide login form after successful login

@@ -18,9 +18,6 @@ namespace DentalClinicManagement.PL
        public string Password { get; set; }
        public bool IsAdmin { get; set; }
 
-        public static implicit operator Receptionist(Dentist v)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

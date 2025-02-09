@@ -52,7 +52,7 @@ namespace DentalClinicManagement.PL
 
             PictureBox logo = new PictureBox
             {
-                Image = Image.FromFile("icons8-dental-chair-96.png"),
+                Image = Image.FromFile("icons8-dentist-chair-64.png"),
                 SizeMode = PictureBoxSizeMode.Zoom,
                 Width = 100,
                 Height = 100,
@@ -61,7 +61,6 @@ namespace DentalClinicManagement.PL
             };
             sidebar.Controls.Add(logo);
 
-            // زرار الانتقال إلى الصفحة الرئيسية
             MaterialButton dashboardButton = new MaterialButton
             {
                 Text = "Dashboard",
@@ -75,7 +74,6 @@ namespace DentalClinicManagement.PL
             dashboardButton.Click += (sender, e) => OpenForm(new DashboardForm());
             sidebar.Controls.Add(dashboardButton);
 
-            // زرار الانتقال إلى المرضى
             MaterialButton patientsButton = new MaterialButton
             {
                 Text = "Patients",
@@ -88,7 +86,6 @@ namespace DentalClinicManagement.PL
             };
             sidebar.Controls.Add(patientsButton);
 
-            // زرار الانتقال إلى الأطباء
             MaterialButton dentistsButton = new MaterialButton
             {
                 Text = "Dentists",
@@ -102,7 +99,6 @@ namespace DentalClinicManagement.PL
             dentistsButton.Click += (sender, e) => OpenForm(new DentistsForm(loggedReceptionist));
             sidebar.Controls.Add(dentistsButton);
 
-            // شريط علوي يحتوي على البحث والأزرار
             Panel topPanel = new Panel
             {
                 BackColor = Color.White,
@@ -216,9 +212,9 @@ namespace DentalClinicManagement.PL
             }
 
             var filteredPatients = _patientRepo.GetAll()
-                .Where(p => p.Name.Contains(query) ||
-                            p.Phone.Contains(query) ||
-                            p.Email.Contains(query))
+                .Where(p => p.Name.ToLower().Contains(query.ToLower()) ||
+                            p.Phone.ToLower().Contains(query.ToLower()) ||
+                            p.Email.ToLower().Contains(query.ToLower()))
                 .ToList();
 
             dataGrid.Rows.Clear();
@@ -250,7 +246,7 @@ namespace DentalClinicManagement.PL
                     EditPatientForm editForm = new EditPatientForm(selectedPatient);
                     if (editForm.ShowDialog() == DialogResult.OK)
                     {
-                        LoadPatients(); 
+                        LoadPatients();
                     }
                 }
                 else

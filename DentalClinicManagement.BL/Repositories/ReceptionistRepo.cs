@@ -32,7 +32,7 @@ namespace DentalClinicManagement.BL.Repositories
             if (receptionist == null)
                 throw new ArgumentNullException(nameof(receptionist), "Receptionist object is null");
 
-            receptionist.Password = UserRepo<Receptionist>.HashPassword(receptionist.Password); // Hash before saving
+            //receptionist.Password = UserRepo<Receptionist>.HashPassword(receptionist.Password); // Hash before saving
             appDbContext.Receptionists.Add(receptionist);
             appDbContext.SaveChanges();
             return receptionist;
@@ -57,7 +57,7 @@ namespace DentalClinicManagement.BL.Repositories
             // ✅ تحديث كلمة المرور فقط إذا تم تغييرها
             if (!string.IsNullOrWhiteSpace(updatedReceptionist.Password))
             {
-                existingReceptionist.Password = UserRepo<Receptionist>.HashPassword(updatedReceptionist.Password);
+                //existingReceptionist.Password = UserRepo<Receptionist>.HashPassword(updatedReceptionist.Password);
             }
 
             appDbContext.SaveChanges();
